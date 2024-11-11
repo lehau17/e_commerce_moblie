@@ -10,7 +10,7 @@ const CheckIcon = () => (
   </Svg>
 );
 
-export default function OrderSuccess() {
+export default function OrderSuccess({navigation, route}) {
   return (
     <View style={styles.container}>
       {/* Check Icon */}
@@ -56,7 +56,7 @@ export default function OrderSuccess() {
       </View>
 
       {/* Back to Home Button */}
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={()=>{navigation.navigate("Home")}}>
         <Text style={tw`text-white font-semibold`}>Back to Home</Text>
       </TouchableOpacity>
     </View>

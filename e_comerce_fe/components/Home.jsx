@@ -1,117 +1,178 @@
-import React from "react";
-import { View, TextInput, Image, TouchableOpacity, ScrollView, Text, KeyboardAvoidingView, Platform, FlatList} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, TextInput, Image, TouchableOpacity, ScrollView, Text, KeyboardAvoidingView, Platform, FlatList, ActivityIndicator, Animated } from "react-native";
 import tw from "twrnc";
 import SearchIcon from "../icons/SearchIcon";
-import StarIcon from "../icons/StarIcon"
+import StarIcon from "../icons/StarIcon";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from '../redux/slices/categorySlices';  // Import action
+import { fetchProducts, fetchTopRecommendedProducts } from '../redux/slices/productSlice';  
+import ImageSlider from "./ImageSlider";
+import Footer from "./Footer.jsx";  // Footer component, assuming it is implemented elsewhere
 
+export default function Home({ navigation, route }) {
+  const dispatch = useDispatch();
+  const { categories, loading, error } = useSelector((state) => state.categories);
+  const { topRecommended } = useSelector((state) => state.products);
+  const [footerVisible, setFooterVisible] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current; // Using Animated.Value for scroll position
 
+  const sliderData = [
+    {
+      url: 'https://salt.tikicdn.com/cache/w750/ts/tikimsp/46/28/ff/cebf123f259b588ca30a767d83e4e715.jpg.webp',
+      title: "hinh 1"
+    },
+    {
+      url: "https://salt.tikicdn.com/cache/w750/ts/tikimsp/3f/72/5c/d52bef2eb88a0d329934ef56e484528e.jpg.webp"
+    }
+  ];
 
-const cate = [
-  { id: 1, url: "https://picsum.photos/200", name: "Category" },
-  { id: 1, url: "https://picsum.photos/200", name: "Category" },
+  useEffect(() => {
+    dispatch(fetchCategories());
+    dispatch(fetchTopRecommendedProducts());
+  }, [dispatch]);
 
-  { id: 1, url: "https://picsum.photos/200", name: "Category" },
+  const handleScroll = (event) => {
+    const contentOffsetY = event.nativeEvent.contentOffset.y;
+    // If scrolling down, hide the footer; if scrolling up, show it
+    setFooterVisible(contentOffsetY < 100); // Adjust threshold as needed
+  };
 
-  { id: 1, url: "https://picsum.photos/200", name: "Category" },
+  // Hiển thị loading khi đang gọi API
+  if (loading) {
+    return (
+      <View>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
-  { id: 1, url: "https://picsum.photos/200", name: "Category" },
-  
-  // Add more categories as needed...
-];
+  // Hiển thị lỗi nếu có
+  if (error) {
+    console.log(error);
+  }
 
-export default function Home({navigation, route}) {
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ScrollView style={tw`bg-white`} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
-        <View style={tw`p-3`}>
-          <View style={tw`flex flex-row mb-4`}>
-            <TextInput
-              placeholder="Searching ......"
-              placeholderTextColor="gray"
-              style={tw`border-none p-2 rounded-3xl bg-[#e3e4e5] flex-1`}
-            />
-            <TouchableOpacity
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 4,
-                backgroundColor: "#e3e4e5",
-                borderRadius: 1000,
-                marginLeft: 4,
-              }}
-            >
-              <SearchIcon />
-            </TouchableOpacity>
-          </View>
-
-          {/* Category list */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={tw`flex-row `}>
-            {cate.map((item) => (
-              <TouchableOpacity key={item.id} style={{ padding: 10 }} onPress={()=>{
-                navigation.navigate("CategoryList", {cate : item.name})
-              }}>
-                <Image source={{ uri: item.url }} style={{ width: 70, height: 70, borderRadius: 35 }} />
-                <Text style={{ textAlign: "center", marginTop: 5, fontSize: 16, fontWeight: "700" }}>{item.name}</Text>
+      <ScrollView 
+        style={tw`bg-[#2f80ec]`} 
+        showsVerticalScrollIndicator={false} 
+        onScroll={handleScroll}
+        scrollEventThrottle={16} 
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
+        <View style={tw`relative`}>
+          <View style={tw``}>
+            <View style={tw`flex flex-row px-3 py-4`}>
+              <TextInput
+                placeholder="Searching ......"
+                placeholderTextColor="gray"
+                style={tw`border-none p-2 rounded-3xl bg-[#e3e4e5] flex-1`}
+              />
+              <TouchableOpacity
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 4,
+                  backgroundColor: "#e3e4e5",
+                  borderRadius: 1000,
+                  marginLeft: 4,
+                }}
+              >
+                <SearchIcon />
+              </TouchableOpacity>
+            </View>
+              <View style={tw`rounded-t-[30px] bg-[#f1f2f7]`}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={tw`flex-row bg-white m-3 rounded-[25px] p-3`}>
+            {categories.map((item) => (
+              <TouchableOpacity key={item.id} style={{ padding: 10 }} onPress={() => navigation.navigate("CategoryList", { cate: item.name })}>
+                <Image source={{ uri: item.image }} style={{ width: 50, height: 50, borderRadius: 35 }} />
+                <Text style={{ textAlign: "center", marginTop: 5, fontSize: 12, fontWeight: "700" }}>{item.name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-
-          {/* Ad section */}
-          <View style={tw`flex flex-row p-5 bg-[#CCCCFF] items-center justify-between rounded-lg mt-4`}>
-            <View>
-              <Text style={{ fontWeight: "700", fontSize: 30, color: "blue" }}>Shoes</Text>
-              <Text style={{ fontSize: 25, fontWeight: "300" }}>Save off 50%</Text>
-              <TouchableOpacity style={{ padding: 10, backgroundColor: "black", marginTop: 5 }}>
-                <Text style={{ color: "white", textAlign: "center", fontWeight: "500" }}>Buy now</Text>
-              </TouchableOpacity>
-            </View>
-            <Image source={{ uri: "https://picsum.photos/200" }} style={{ width: 100, height: 100 }} />
-          </View>
-
-         {/* Hình ảnh sản phẩm */}
-        {[1].map((_, idx) => (
-          <View key={idx} style={tw`flex flex-row items-center justify-between mt-4`}>
-            <View style={tw`w-[48%] relative`}>
-              <Text style={tw`absolute top-5 left-0 rounded-r-xl bg-red-500 text-black px-2 py-1 z-10`}>50% Off</Text>
-              <Image source={{ uri: "https://picsum.photos/200" }} style={{ height: 200, borderRadius: 10 }} />
-            </View>
-            <View style={tw`w-[48%] relative`}>
-              <Text style={tw`absolute top-5 rounded-r-xl left-0 bg-red-500 text-black px-2 py-1 z-10`}>50% Off</Text>
-              <Image source={{ uri: "https://picsum.photos/200" }} style={{ height: 200, borderRadius: 10 }} />
-            </View>
-          </View>
-        ))}
-        <View style={tw`flex flex-row w-full items-center  justify-between mt-3 `}>
-          <Text style={tw`text-lg font-medium`}>Recomend for you</Text>
-          <TouchableOpacity>View all</TouchableOpacity>
-        </View>
-
-        <View >
-        
-                   <FlatList showsHorizontalScrollIndicator={false} data={cate} horizontal keyExtractor={(item)=>item.id.toString()} renderItem={({item,index})=>{
-           return <TouchableOpacity  style={tw`px-2 p pt-2 pb-5 bg-[#e3e4e5] w-[35] h-[200px] rounded-lg mr-3`}>
-            <Image source={{uri : "https://picsum.photos/200"}} style={{ height:"70%",width:"100%", borderRadius: 10 }}/>
-              <Text style={tw`mt-3 font-bold text-lg`}>{item.name}</Text>
-              <View style={tw`flex flex-row items-center justify-between`}>
-                <View style={tw`flex flex-row items-center justify-between`}>
-                  <StarIcon />
-                  <Text>4.5</Text>
-                </View>
-                <Text>995$</Text>
               </View>
-           </TouchableOpacity>
-         }}/>
+          </View>
+
+          {/* Categories */}
+            <View style={tw`bg-[#f1f2f7]`}>
+              <ImageSlider data={sliderData} />
+            
+            </View>
+
+
+
+
+          <View style={tw`p-3 bg-[#f1f2f7]`}>
+            <View style={tw`rounded-lg bg-white p-1 rounded-[20px]`}>
+              <View style={tw`flex flex-row w-full items-center justify-between px-3 pt-3 pb-4 border-b border-b-slate-400 mb-4`}>
+                <Text style={tw`text-md font-bold`}>Dành cho bạn</Text>
+                <TouchableOpacity>
+                  <Text style={tw`text-[red] text-[12px]`}>See all</Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+              showsHorizontalScrollIndicator={false}
+              data={topRecommended.data}
+              numColumns={2}
+              keyExtractor={(item) => item.id.toString()}
+              columnWrapperStyle={{
+                justifyContent: 'space-between',
+              }}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("ProductDetail", { product: item })}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: '49%',
+                    backgroundColor: 'white',
+                    borderRadius: 5,
+                    marginBottom: 10,
+                    padding: 5,
+                    paddingBottom: 10
+                  }}
+                >
+                  <View style={{ height: 180, borderRadius: 5, overflow: 'hidden' }}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ height: '100%', width: '100%' }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                  <Text style={tw`mt-1 text-[gray] text-sm px-1`}>
+                    {item.product_name}
+                  </Text>
+                  <View style={tw`mt-1 px-1 flex flex-row items-center`}>
+                    <StarIcon size={12} />
+                    <StarIcon size={12} />
+                    <StarIcon size={12} />
+                    <StarIcon size={12} />
+                    <StarIcon size={12} />
+                    <Text style={tw`border-l border-l-slate-400 text-xs`}>500 đã bán</Text>
+                  </View>
+                  <Text style={tw`px-1 mt-2`}>500.000 VND</Text>
+                </TouchableOpacity>
+              )}
+            />
+            </View>
+          </View>
         </View>
-
-
-
-
-        </View>
-
       </ScrollView>
+
+      {/* Footer */}
+      {footerVisible && (
+        <Animated.View
+          style={[
+            tw`flex-row justify-between p-4 bg-white border-t border-t-slate-400`,
+            { position: 'absolute', bottom: 0, width: '100%' },
+          ]}
+        >
+          <Footer />
+        </Animated.View>
+      )}
     </KeyboardAvoidingView>
   );
 }

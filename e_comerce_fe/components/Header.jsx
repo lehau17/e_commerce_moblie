@@ -5,10 +5,11 @@ import { Svg, Path } from 'react-native-svg';
 
 
 export default function Header({ title, navigation }) {
+  console.log("Check header", navigation)
   return (
     <View style={tw`p-4 flex bg-white flex-row items-center text-black justify-between border-b border-b-teal-300`}>
       <View style={tw`flex flex-row items-center text-black`}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>{navigation.goBack()}}>
          <Svg
           width={24}
           height={24}

@@ -13,7 +13,16 @@ import Payment from "./components/PaymentScreen"
 import Checkout from "./components/CheckoutScreen"
 import ProductDetail from "./components/ProductDetail"
 const Stack = createStackNavigator();
-
+import { Provider } from "react-redux"
+import store from "./redux/store"
+import { navigationRef } from "./cofig/navigationRef"
+import Cart from "./components/Cart.jsx"
+import Home_v2 from "./components/Home_v2.jsx"
+import Payment_v2 from "./components/Payment_v2.jsx"
+import Checkout_v2 from "./components/Checkout_v2.jsx"
+import OrderCusmer from "./components/OrderCusumer.jsx"
+import SelectedPayment from "./components/SelectedPayment.jsx"
+import SeeAllCate from "./components/SeeAllCate.jsx"
 // Details Screen component
 function DetailsScreen({ navigation }) {
   return (
@@ -25,60 +34,93 @@ function DetailsScreen({ navigation }) {
 }
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="ProductDetail"
-        screenOptions={{ cardStyle: { flex: 1 } }}>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            header: ({ navigation }) => (
-              <Header title="Home" navigation={navigation} />
-            ),
-          }}
-        />
-                <Stack.Screen
-          name="ProductDetail"
-          component={ProductDetail}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="CategoryList"
-          component={CategoryProduct}
-         options={{ headerShown: false }}
-        />
-                <Stack.Screen
-          name="OrderSuccess"
-          component={OrderSuccess}
-         options={{ headerShown: false }}
-        />
-         <Stack.Screen
-          name="Payment"
-          component={Payment}
-         options={{ headerShown: false }}
-        />
-                 <Stack.Screen
-          name="Checkout"
-          component={Checkout}
-         options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Register"
-          component={Register}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Details"
-          component={DetailsScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Navigator
+          initialRouteName="SeeAllCate"
+          screenOptions={{ cardStyle: { flex: 1 } }}>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{ headerShown: false }}
+
+          />
+          <Stack.Screen
+            name="ProductDetail"
+            component={ProductDetail}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CategoryList"
+            component={CategoryProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="OrderSuccess"
+            component={OrderSuccess}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Payment"
+            component={Payment}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Checkout"
+            component={Checkout}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={Register}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Details"
+            component={DetailsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Carts"
+            component={Cart}
+            options={{ headerShown: false }}
+          /><Stack.Screen
+            name="Paymentv2"
+            component={Payment_v2}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Home2"
+            component={Home_v2}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Checkout_v2"
+            component={Checkout_v2}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="OrderCusmer"
+            component={OrderCusmer}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SelectedPayment"
+            component={SelectedPayment}
+            options={{ headerShown: false }}
+          /><Stack.Screen
+            name="SeeAllCate"
+            component={SeeAllCate}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }

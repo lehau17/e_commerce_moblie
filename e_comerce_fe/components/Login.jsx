@@ -1,15 +1,40 @@
-import React from 'react';
-import { Text, TextInput, View, Button, Alert, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, TextInput, View, Alert, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import tw from 'twrnc';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../redux/slices/authSlices'; // Import your login action
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 export default function LoginScreen() {
   const { control, handleSubmit, formState: { errors } } = useForm();
+  const dispatch = useDispatch();
+  const navigation = useNavigation(); // Use the navigation hook
+
+  // Accessing Redux state for loading, error, and token
+  const { loading, error, accessToken } = useSelector(state => state.auth);
+
+  useEffect(() => {
+    if (accessToken) {
+      // Navigate to Home screen when login is successful
+      navigation.navigate("Home");
+    }
+  }, [accessToken, navigation]);
 
   const onSubmit = (data) => {
-    console.log(data);
-    Alert.alert("Login Successful", `Username: ${data.username}`);
+    // Dispatch the login action with the form data (username and password)
+    dispatch(login({
+      username: data.username,
+      password: data.password
+    }));
   };
+
+  // Show error if exists
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Login Error", error);
+    }
+  }, [error]);
 
   return (
     <View style={tw`flex-1 justify-center px-6 bg-gradient-to-b from-blue-500 to-blue-300`}>
@@ -72,10 +97,15 @@ export default function LoginScreen() {
       <TouchableOpacity
         style={tw`bg-white p-3 rounded-lg shadow-md`}
         onPress={handleSubmit(onSubmit)}
+        disabled={loading} // Disable button when loading
       >
         <Text style={tw`text-blue-500 text-center text-lg font-semibold`}>Login</Text>
       </TouchableOpacity>
 
+      {/* Loading indicator */}
+      {loading && <Text style={tw`text-white text-center mt-4`}>Loading...</Text>}
+
+      {/* Forgot Password */}
       <TouchableOpacity style={tw`mt-4`}>
         <Text style={tw`text-blue-400 text-center`}>Forgot Password?</Text>
       </TouchableOpacity>
