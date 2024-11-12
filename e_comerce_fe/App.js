@@ -24,6 +24,7 @@ import SeeAllCate from "./components/SeeAllCate.jsx"
 import SearchProduct from "./components/SearchProduct.jsx"
 import Account from "./components/Account.jsx"
 import AccountSetting from "./components/AccountSetting.jsx"
+import UserInfo from "./components/UserInfo.jsx"
 // Details Screen component
 function DetailsScreen({ navigation }) {
   return (
@@ -39,7 +40,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
-          initialRouteName="AccountSetting"
+          initialRouteName="UserInfo"
           screenOptions={{ cardStyle: { flex: 1 } }}>
           <Stack.Screen
             name="Home"
@@ -134,6 +135,11 @@ export default function App() {
                     <Stack.Screen
             name="AccountSetting"
             component={AccountSetting}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserInfo"
+            component={UserInfo}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
