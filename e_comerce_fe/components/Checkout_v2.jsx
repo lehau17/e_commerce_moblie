@@ -1,13 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput, Modal } from 'react-native';
 import tw from "twrnc";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMyAddresses } from "../redux/slices/shipping_addressesSlice";
 
-const CheckoutScreens = ({navigation, route}) => {
-  const [selectedAddress, setSelectedAddress] = useState(null);
+const CheckoutScreens = ({ navigation, route }) => {
+  const [selectedAddress, setSelectedAddress] = useState({});
+  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+  const [newAddress, setNewAddress] = useState({
+    name: '',
+    address: '',
+    phone: '',
+  }); // State for new address fields
+  const dispatch = useDispatch();
+  console.log(selectedAddress)
+  const { addresses } = useSelector((state) => state.addresses);
+
+  useEffect(() => {
+    dispatch(fetchMyAddresses());
+  }, [dispatch]);
 
   const handleCheckboxToggle = (addressId) => {
-    setSelectedAddress(selectedAddress === addressId ? null : addressId); // Chuyển đổi giữa chọn và bỏ chọn
+    setSelectedAddress(selectedAddress === addressId ? null : addressId);
   };
+
+  const handleAddAddress = () => {
+    // Handle adding new address
+    console.log(newAddress);
+    setModalVisible(false); // Close the modal after adding
+    // Dispatch an action to save the address to the store or backend
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false); // Close modal on cancel
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -32,57 +59,94 @@ const CheckoutScreens = ({navigation, route}) => {
                   <Text style={styles.stepLabel}>Payment</Text>
                 </View>
               </View>
-              <TouchableOpacity style={styles.addAddressButton}>
+              <TouchableOpacity style={styles.addAddressButton} onPress={() => setModalVisible(true)}>
                 <Text style={styles.addAddressText}>+ Add New Address</Text>
               </TouchableOpacity>
-              <View style={styles.addressContainer}>
-                <TouchableOpacity
-                  style={styles.checkboxContainer}
-                  onPress={() => handleCheckboxToggle(1)} // Sử dụng ID để chọn
-                >
-                  <View style={[styles.checkbox, selectedAddress === 1 && styles.checkboxChecked]}>
-                    {selectedAddress === 1 && <Text style={styles.checkboxText}>✓</Text>}
+              <View>
+                {addresses.map((item) => (
+                  <View style={styles.addressContainer} key={item.id}>
+                    <TouchableOpacity
+                      style={styles.checkboxContainer}
+                      onPress={() => handleCheckboxToggle(item)} // Use ID to select
+                    >
+                      <View style={[styles.checkbox, selectedAddress.id === item.id && styles.checkboxChecked]}>
+                        {selectedAddress === item.id && <Text style={styles.checkboxText}>✓</Text>}
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.addressInfo}>
+                      <Text style={styles.addressName}>{item.user_received}</Text>
+                      <Text style={styles.addressDetails}>{item.address}</Text>
+                      <Text style={styles.addressPhone}>{item.phone}</Text>
+                    </View>
+                    <TouchableOpacity style={styles.editButton}>
+                      <Text style={styles.editText}>✏️</Text>
+                    </TouchableOpacity>
                   </View>
-                </TouchableOpacity>
-                <View style={styles.addressInfo}>
-
-                  <Text style={styles.addressName}>John Doe</Text>
-                  <Text style={styles.addressDetails}>123, My street, Kingston, Kingston-653263, Argentina</Text>
-                  <Text style={styles.addressPhone}>9876543213</Text>
-                </View>
-                <TouchableOpacity style={styles.editButton}>
-                  <Text style={styles.editText}>✏️</Text>
-                </TouchableOpacity>
+                ))}
               </View>
-              <TouchableOpacity style={styles.primaryButton} onPress={()=>{navigation.navigate("OrderCusmer")}}>
+              <TouchableOpacity style={styles.primaryButton} onPress={() => { navigation.navigate("OrderCusmer", {address : selectedAddress}); }}>
                 <Text style={styles.primaryButtonText}>Deliver Here</Text>
               </TouchableOpacity>
             </View>
           </View>
-
-
-
-
-
-
         </View>
-
       </ScrollView>
+
+      {/* Modal for Adding New Address */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add New Address</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Recipient's Name"
+              value={newAddress.name}
+              onChangeText={(text) => setNewAddress({ ...newAddress, name: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Address"
+              value={newAddress.address}
+              onChangeText={(text) => setNewAddress({ ...newAddress, address: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone Number"
+              value={newAddress.phone}
+              onChangeText={(text) => setNewAddress({ ...newAddress, phone: text })}
+              keyboardType="phone-pad"
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalButton} onPress={handleAddAddress}>
+                <Text style={styles.modalButtonText}>Add Address</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={handleCancel}>
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,  // Đảm bảo container chiếm toàn bộ màn hình
+    flex: 1,
     backgroundColor: '#2f80ec',
   },
   scrollContainer: {
-    flexGrow: 1,  // Đảm bảo nội dung trong ScrollView có thể chiếm hết chiều cao
+    flexGrow: 1,
   },
   screen: {
     borderRadius: 10,
-    flex: 1
+    flex: 1,
   },
   screenTitle: {
     fontSize: 18,
@@ -117,13 +181,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 10,
-    flex: 1,
-    height: "full",
   },
   progressStep: {
     alignItems: 'center',
     flex: 1,
-    marginBottom: 5
+    marginBottom: 5,
   },
   activeStep: {
     borderBottomColor: 'black',
@@ -159,6 +221,7 @@ const styles = StyleSheet.create({
   },
   addressInfo: {
     maxWidth: '85%',
+    flex:1
   },
   addressName: {
     fontSize: 16,
@@ -190,6 +253,46 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingLeft: 10,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    backgroundColor: '#3498db',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

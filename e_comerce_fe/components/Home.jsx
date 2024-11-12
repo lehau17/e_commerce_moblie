@@ -85,7 +85,14 @@ export default function Home({ navigation, route }) {
               </TouchableOpacity>
             </View>
               <View style={tw`rounded-t-[30px] bg-[#f1f2f7]`}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={tw`flex-row bg-white m-3 rounded-[25px] p-3`}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={tw`flex-row bg-white m-3 pb-3 rounded-[25px] p-3`}>
+            <TouchableOpacity style={{
+              position:"absolute",
+              left:250,
+              bottom:-5
+            }} onPress={()=>{
+              navigation.navigate("SeeAllCate")
+            }}>see all</TouchableOpacity>
             {categories.map((item) => (
               <TouchableOpacity key={item.id} style={{ padding: 10 }} onPress={() => navigation.navigate("CategoryList", { cate: item.name })}>
                 <Image source={{ uri: item.image }} style={{ width: 50, height: 50, borderRadius: 35 }} />
@@ -170,7 +177,7 @@ export default function Home({ navigation, route }) {
             { position: 'absolute', bottom: 0, width: '100%' },
           ]}
         >
-          <Footer />
+          <Footer navigation={navigation} />
         </Animated.View>
       )}
     </KeyboardAvoidingView>

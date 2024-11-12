@@ -17,7 +17,6 @@ axiosInstance.interceptors.request.use(
   async (config) => {
     // Lấy accessToken từ AsyncStorage
     const accessToken = await AsyncStorage.getItem('accessToken');
-    console.log("check accessToken : >>>>>>>", accessToken)
     // Kiểm tra nếu request không phải là login hoặc register, thì thêm accessToken vào header
     if (config.url && !config.url.includes('login') && !config.url.includes('register') && accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;  // Thêm accessToken vào header Authorization
@@ -44,9 +43,6 @@ axiosInstance.interceptors.response.use(
         // Lưu tokens vào AsyncStorage
         await AsyncStorage.setItem('accessToken', accessToken);
         await AsyncStorage.setItem('refreshToken', refreshToken);
-
-        // Điều hướng đến trang Home
-        console.log('Login/Registration successful, navigating to Home...');
         navigate('Home');
       } else {
         // Nếu không có token trong response

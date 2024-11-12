@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, TouchableOpacity, Animated, Text } from 'react-native';
 import { Ionicons, MaterialIcons, Entypo, FontAwesome5, AntDesign } from '@expo/vector-icons';  // Sử dụng thư viện icon
+
 const Footer = ({ scrollY, navigation }) => {
   const footerTranslateY = useRef(new Animated.Value(0)).current; // Animation để di chuyển footer lên xuống
 
@@ -25,10 +26,12 @@ const Footer = ({ scrollY, navigation }) => {
         backgroundColor: 'white',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        borderTopWidth: 2, // Thêm border trên cùng
+        borderTopColor: 'gray', // Màu của border trên cùng
         transform: [{ translateY: footerTranslateY }],  // Điều khiển vị trí theo scrollY
       }}
     >
-      <TouchableOpacity style={{ alignItems: 'center' }} onPress={()=>{navigation.navigate("Home")}}>
+      <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => { navigation.navigate("Home") }}>
         <Ionicons name="home-outline" size={20} color="black" />
         <Text>Home</Text>
       </TouchableOpacity>
@@ -40,7 +43,7 @@ const Footer = ({ scrollY, navigation }) => {
         <Entypo name="heart-outlined" size={20} color="black" />
         <Text>Favorites</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{ alignItems: 'center' }}>
+      <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => { navigation.navigate("Carts") }}>
         <FontAwesome5 name="shopping-cart" size={20} color="black" />
         <Text>Cart</Text>
       </TouchableOpacity>

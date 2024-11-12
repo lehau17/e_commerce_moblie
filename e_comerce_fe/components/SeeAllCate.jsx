@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux"
 const SelectedPayment = ({ navigation, route }) => {
   const dispatch = useDispatch()
   const { categories, loading } = useSelector((state) => state.categories)
+  console.log(categories)
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>

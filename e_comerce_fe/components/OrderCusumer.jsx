@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput, Image,
 import tw from "twrnc";
 
 const CheckoutScreens = ({navigation, route}) => {
+  const address = route.params.address
   const [selectedAddress, setSelectedAddress] = useState(null);
-
+  console.log(address)
   const handleCheckboxToggle = (addressId) => {
     setSelectedAddress(selectedAddress === addressId ? null : addressId); // Chuyển đổi giữa chọn và bỏ chọn
   };
@@ -40,9 +41,9 @@ const CheckoutScreens = ({navigation, route}) => {
               <View style={styles.addressContainer}>
                 <View style={styles.addressInfo}>
 
-                  <Text style={styles.addressName}>John Doe</Text>
-                  <Text style={styles.addressDetails}>123, My street, Kingston, Kingston-653263, Argentina</Text>
-                  <Text style={styles.addressPhone}>9876543213</Text>
+                  <Text style={styles.addressName}>{address.user_received}</Text>
+                  <Text style={styles.addressDetails}>{address.address}</Text>
+                  <Text style={styles.addressPhone}>{address.phone}</Text>
                 </View>
 
               </View>

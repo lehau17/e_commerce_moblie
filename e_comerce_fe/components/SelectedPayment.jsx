@@ -3,6 +3,13 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput, Image,
 import tw from "twrnc";
 
 const SelectedPayment = ({navigation, route}) => {
+  // State to manage selected payment options
+  const [selectedPayment, setSelectedPayment] = useState(null);
+
+  // Handle selection toggle
+  const handleSelectPayment = (paymentType) => {
+    setSelectedPayment(paymentType);
+  };
 
   return (
     <View style={styles.container}>
@@ -29,53 +36,52 @@ const SelectedPayment = ({navigation, route}) => {
                 </View>
               </View>
 
-
+              {/* Payment Method Selection */}
               <View style={styles.addressContainer}>
                 <TouchableOpacity
                   style={styles.checkboxContainer}
+                  onPress={() => handleSelectPayment('credit_card')}
                 >
-                  <View style={[styles.checkbox, styles.checkboxChecked]}>
-                    <Text style={styles.checkboxText}>✓</Text>
+                  <View style={[styles.checkbox, selectedPayment === 'credit_card' && styles.checkboxChecked]}>
+                    {selectedPayment === 'credit_card' && <Text style={styles.checkboxText}>✓</Text>}
                   </View>
                 </TouchableOpacity>
                 <Image source={{ uri: "https://tse2.mm.bing.net/th?id=OIP.v2CGEw20lkMY_CiWpZvRqgHaHa&pid=Api&P=0&h=180" }} style={{ width: 30, height: 30, marginLeft: 5 }} />
-                <Text style={{ marginLeft: 5, fontWeight: 700 }}>Thẻ ghi nợ / thẻ ngân hàng</Text>
+                <Text style={{ marginLeft: 5, fontWeight: '700' }}>Thẻ ghi nợ / thẻ ngân hàng</Text>
               </View>
-
 
               <View style={styles.addressContainer}>
                 <TouchableOpacity
                   style={styles.checkboxContainer}
+                  onPress={() => handleSelectPayment('visa')}
                 >
-                  <View style={[styles.checkbox, styles.checkboxChecked]}>
-                    <Text style={styles.checkboxText}>✓</Text>
+                  <View style={[styles.checkbox, selectedPayment === 'visa' && styles.checkboxChecked]}>
+                    {selectedPayment === 'visa' && <Text style={styles.checkboxText}>✓</Text>}
                   </View>
                 </TouchableOpacity>
                 <Image source={{ uri: "https://tse2.mm.bing.net/th?id=OIP.6snL0ivARtOqr7JvjexMPQHaHa&pid=Api&P=0&h=180" }} style={{ width: 30, height: 30, marginLeft: 5 }} />
-                <Text style={{ marginLeft: 5, fontWeight: 700 }}>Thẻ Visa / Ghi nợ quốc tế</Text>
+                <Text style={{ marginLeft: 5, fontWeight: '700' }}>Thẻ Visa / Ghi nợ quốc tế</Text>
               </View>
+
               <View style={styles.addressContainer}>
                 <TouchableOpacity
                   style={styles.checkboxContainer}
+                  onPress={() => handleSelectPayment('cash')}
                 >
-                  <View style={[styles.checkbox, styles.checkboxChecked]}>
-                    <Text style={styles.checkboxText}>✓</Text>
+                  <View style={[styles.checkbox, selectedPayment === 'cash' && styles.checkboxChecked]}>
+                    {selectedPayment === 'cash' && <Text style={styles.checkboxText}>✓</Text>}
                   </View>
                 </TouchableOpacity>
-                <Image source={{ uri: "https://tse1.mm.bing.net/th?id=OIP.Yo_q-DsKk-TOGwhZ1UD8mgHaHa&pid=Api&P=0&h=180" }} style={{ width: 30, height: 30, marginLeft: 5 , borderRadius:1000}} />
-                <Text style={{ marginLeft: 5, fontWeight: 700 }}>Thanh toán bằng tiền mặt</Text>
+                <Image source={{ uri: "https://tse1.mm.bing.net/th?id=OIP.Yo_q-DsKk-TOGwhZ1UD8mgHaHa&pid=Api&P=0&h=180" }} style={{ width: 30, height: 30, marginLeft: 5, borderRadius: 1000 }} />
+                <Text style={{ marginLeft: 5, fontWeight: '700' }}>Thanh toán bằng tiền mặt</Text>
               </View>
 
-
-
-              <TouchableOpacity style={styles.primaryButton} onPress={()=>{navigation.navigate("OrderSuccess")}}>
+              <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate("OrderSuccess")}>
                 <Text style={styles.primaryButtonText}>Tiếp tục</Text>
               </TouchableOpacity>
             </View>
-
           </View>
         </View>
-
       </ScrollView>
     </View>
   );
@@ -83,15 +89,15 @@ const SelectedPayment = ({navigation, route}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,  // Đảm bảo container chiếm toàn bộ màn hình
+    flex: 1,
     backgroundColor: '#2f80ec',
   },
   scrollContainer: {
-    flexGrow: 1,  // Đảm bảo nội dung trong ScrollView có thể chiếm hết chiều cao
+    flexGrow: 1,
   },
   screen: {
     borderRadius: 10,
-    flex: 1
+    flex: 1,
   },
   screenTitle: {
     fontSize: 18,
@@ -120,19 +126,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   progressContainer: {
+    flex:1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 10,
-    flex: 1,
-    height: "full",
   },
   progressStep: {
     alignItems: 'center',
     flex: 1,
-    marginBottom: 5
+    marginBottom: 5,
   },
   activeStep: {
     borderBottomColor: 'black',
@@ -147,67 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#555',
   },
-  orderItem: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  productImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 10,
-  },
-  productDetails: {
-    flex: 1,
-  },
-  productName: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  productVariant: {
-    fontSize: 12,
-    color: '#555',
-  },
-  productPrice: {
-    fontSize: 14,
-    color: '#3498db',
-    fontWeight: 'bold',
-  },
-  quantity: {
-    fontSize: 12,
-    color: '#555',
-  },
-  subtotal: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderColor: '#EEE',
-  },
-  subtotalText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  subtotalPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  addAddressButton: {
-    marginVertical: 15,
-    backgroundColor: '#EEE',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  addAddressText: {
-    color: '#3498db',
-  },
   addressContainer: {
     borderRadius: 8,
     padding: 15,
@@ -215,31 +159,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'start',
     alignItems: 'center',
-    borderBottomColor: "gray",
-    borderBottomWidth: "1px"
-  },
-  addressInfo: {
-    maxWidth: '85%',
-  },
-  addressName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  addressDetails: {
-    fontSize: 14,
-    color: '#555',
-  },
-  addressPhone: {
-    fontSize: 14,
-    color: '#555',
-  },
-  editButton: {
-    padding: 5,
-  },
-  editText: {
-    fontSize: 18,
-    color: '#3498db',
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
   },
   primaryButton: {
     backgroundColor: '#3498db',

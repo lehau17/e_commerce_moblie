@@ -5,14 +5,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import tw from 'twrnc';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
-import Header from './components/Header.jsx';
 import Home from './components/Home.jsx';
 import CategoryProduct from "./components/CategoryProduct"
 import OrderSuccess from "./components/OrderSuccess"
 import Payment from "./components/PaymentScreen"
 import Checkout from "./components/CheckoutScreen"
 import ProductDetail from "./components/ProductDetail"
-const Stack = createStackNavigator();
 import { Provider } from "react-redux"
 import store from "./redux/store"
 import { navigationRef } from "./cofig/navigationRef"
@@ -23,6 +21,9 @@ import Checkout_v2 from "./components/Checkout_v2.jsx"
 import OrderCusmer from "./components/OrderCusumer.jsx"
 import SelectedPayment from "./components/SelectedPayment.jsx"
 import SeeAllCate from "./components/SeeAllCate.jsx"
+import SearchProduct from "./components/SearchProduct.jsx"
+import Account from "./components/Account.jsx"
+import AccountSetting from "./components/AccountSetting.jsx"
 // Details Screen component
 function DetailsScreen({ navigation }) {
   return (
@@ -32,12 +33,13 @@ function DetailsScreen({ navigation }) {
     </View>
   );
 }
+const Stack = createStackNavigator();
 export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
-          initialRouteName="SeeAllCate"
+          initialRouteName="AccountSetting"
           screenOptions={{ cardStyle: { flex: 1 } }}>
           <Stack.Screen
             name="Home"
@@ -53,6 +55,11 @@ export default function App() {
           <Stack.Screen
             name="CategoryList"
             component={CategoryProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SearchProduct"
+            component={SearchProduct}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -117,6 +124,16 @@ export default function App() {
           /><Stack.Screen
             name="SeeAllCate"
             component={SeeAllCate}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Account"
+            component={Account}
+            options={{ headerShown: false }}
+          />
+                    <Stack.Screen
+            name="AccountSetting"
+            component={AccountSetting}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
