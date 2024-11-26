@@ -26,6 +26,12 @@ import Account from "./components/Account.jsx"
 import AccountSetting from "./components/AccountSetting.jsx"
 import UserInfo from "./components/UserInfo.jsx"
 import SoDiaChi from "./components/SoDiaChi.jsx"
+import DonHangCuaToi from "./components/DonHangCuaToi.jsx"
+import UpdatePatch from "./components/UpdatePatch.jsx"
+import HomeShop from "./components/HomeShop.jsx"
+import AddProductScreen from "./components/AddProductScreen.jsx"
+import ProductManagementScreen from "./components/ProductManagementScreen.jsx"
+import OrderManagementScreen from "./components/OrderManagementScreen.jsx"
 // Details Screen component
 function DetailsScreen({ navigation }) {
   return (
@@ -41,7 +47,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
-          initialRouteName="SoDiaChi"
+          initialRouteName="HomeShop"
           screenOptions={{ cardStyle: { flex: 1 } }}>
           <Stack.Screen
             name="Home"
@@ -146,6 +152,36 @@ export default function App() {
                     <Stack.Screen
             name="SoDiaChi"
             component={SoDiaChi}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="DonHangCuaToi"
+            component={DonHangCuaToi}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UpdatePatch"
+            component={UpdatePatch}
+            options={{ headerShown: false }}
+          />
+                    <Stack.Screen
+            name="HomeShop"
+            component={HomeShop}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ProductManagementScreen"
+            component={ProductManagementScreen}
+            options={{ headerShown: false }}
+          />
+                    <Stack.Screen
+            name="AddProductScreen"
+            component={AddProductScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="OrderManagementScreen"
+            component={OrderManagementScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

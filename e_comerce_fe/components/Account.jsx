@@ -38,7 +38,9 @@ export default function Account({ navigation, route }) {
 
             {/* Icons cho Settings và Cart */}
             <View style={tw`flex-row`}>
-              <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={tw`mr-4`}>
+              <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={tw`mr-4`} onPress={()=>{
+                navigation.navigate("AccountSetting")
+              }}>
                 <Ionicons name="settings-outline" size={20} color="black" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate("Cart")}>

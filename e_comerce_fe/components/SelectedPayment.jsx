@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput, Image, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native';
 import tw from "twrnc";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPaymentMethods } from "../redux/slices/paymentSlice";
 
-const SelectedPayment = ({navigation, route}) => {
-  // State to manage selected payment options
+const SelectedPayment = ({ navigation, route }) => {
+  const dispatch = useDispatch();
+  const { paymentMethods, loading, error } = useSelector((state) => state.paymentMethods);
+  // State to manage selected payment option
   const [selectedPayment, setSelectedPayment] = useState(null);
+
+  useEffect(() => {
+    dispatch(fetchPaymentMethods());
+  }, []);
 
   // Handle selection toggle
   const handleSelectPayment = (paymentType) => {
@@ -35,50 +43,21 @@ const SelectedPayment = ({navigation, route}) => {
                   <Text style={styles.stepLabel}>Payment</Text>
                 </View>
               </View>
-
-              {/* Payment Method Selection */}
-              <View style={styles.addressContainer}>
-                <TouchableOpacity
-                  style={styles.checkboxContainer}
-                  onPress={() => handleSelectPayment('credit_card')}
-                >
-                  <View style={[styles.checkbox, selectedPayment === 'credit_card' && styles.checkboxChecked]}>
-                    {selectedPayment === 'credit_card' && <Text style={styles.checkboxText}>✓</Text>}
-                  </View>
-                </TouchableOpacity>
-                <Image source={{ uri: "https://tse2.mm.bing.net/th?id=OIP.v2CGEw20lkMY_CiWpZvRqgHaHa&pid=Api&P=0&h=180" }} style={{ width: 30, height: 30, marginLeft: 5 }} />
-                <Text style={{ marginLeft: 5, fontWeight: '700' }}>Thẻ ghi nợ / thẻ ngân hàng</Text>
-              </View>
-
-              <View style={styles.addressContainer}>
-                <TouchableOpacity
-                  style={styles.checkboxContainer}
-                  onPress={() => handleSelectPayment('visa')}
-                >
-                  <View style={[styles.checkbox, selectedPayment === 'visa' && styles.checkboxChecked]}>
-                    {selectedPayment === 'visa' && <Text style={styles.checkboxText}>✓</Text>}
-                  </View>
-                </TouchableOpacity>
-                <Image source={{ uri: "https://tse2.mm.bing.net/th?id=OIP.6snL0ivARtOqr7JvjexMPQHaHa&pid=Api&P=0&h=180" }} style={{ width: 30, height: 30, marginLeft: 5 }} />
-                <Text style={{ marginLeft: 5, fontWeight: '700' }}>Thẻ Visa / Ghi nợ quốc tế</Text>
-              </View>
-
-              <View style={styles.addressContainer}>
-                <TouchableOpacity
-                  style={styles.checkboxContainer}
-                  onPress={() => handleSelectPayment('cash')}
-                >
-                  <View style={[styles.checkbox, selectedPayment === 'cash' && styles.checkboxChecked]}>
-                    {selectedPayment === 'cash' && <Text style={styles.checkboxText}>✓</Text>}
-                  </View>
-                </TouchableOpacity>
-                <Image source={{ uri: "https://tse1.mm.bing.net/th?id=OIP.Yo_q-DsKk-TOGwhZ1UD8mgHaHa&pid=Api&P=0&h=180" }} style={{ width: 30, height: 30, marginLeft: 5, borderRadius: 1000 }} />
-                <Text style={{ marginLeft: 5, fontWeight: '700' }}>Thanh toán bằng tiền mặt</Text>
-              </View>
-
-              <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate("OrderSuccess")}>
-                <Text style={styles.primaryButtonText}>Tiếp tục</Text>
-              </TouchableOpacity>
+              {paymentMethods.map((item) => (
+                <View style={styles.addressContainer} key={item.id}>
+                  <TouchableOpacity
+                    style={styles.checkboxContainer}
+                    onPress={() => handleSelectPayment(item.method_name)} // Use method_name as identifier
+                  >
+                    <View style={[styles.checkbox, selectedPayment === item.method_name && styles.checkboxChecked]}>
+                      {selectedPayment === item.method_name && <Text style={styles.checkboxText}>✓</Text>}
+                    </View>
+                  </TouchableOpacity>
+                  <Image source={{ uri: item.icon }} style={{ width: 30, height: 30, marginLeft: 5 }} />
+                  <Text style={{ marginLeft: 5, fontWeight: '700' }}>{item.method_name}</Text>
+                </View>
+              ))}
+          <TouchableOpacity onPress={()=>{navigation.navigate("OrderSuccess")}} style={{padding:15, margin:5, borderRadius:20, border:"1px solid gray", textAlign:"center", backgroundColor : "#2f80ec", color  : "white", fontWeight :700}}>Hoàn Thành</TouchableOpacity>
             </View>
           </View>
         </View>
@@ -126,7 +105,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   progressContainer: {
-    flex:1,
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#fff',

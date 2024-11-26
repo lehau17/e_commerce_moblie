@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(100)
+  description String?
+  image       String? @db.VarChar(100)
+  spu         spu[]
+}
+
+model order_details {
+  order_detail_id Int      @id @default(autoincrement())
+  order_id        Int?
+  sku_id          Int?
+  quantity        Int
+  price           Decimal  @db.Decimal(10, 2)
+  total_price     Decimal? @default(dbgenerated("((quantity)::numeric * price)")) @db.Decimal(10, 2)
+  orders          orders?  @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sku             sku?     @relation(fields: [sku_id], references: [id], onUpdate: NoAction)
+}
+
+model orders {
+  id                Int             @id @default(autoincrement())
+  user_id           Int?
+  order_date        DateTime?       @default(now()) @db.Timestamp(6)
+  status            String?         @default("pending") @db.VarChar(20)
+  total_quantity    Int             @default(0)
+  total_amount      Decimal         @default(0.00) @db.Decimal(10, 2)
+  order_details     order_details[]
+  users             users?          @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+  payments          payments[]
+  payment_methods   payment_methods @relation(fields: [payment_method_id], references: [id])
+  payment_method_id Int
+  address           Json?
+}
+
+model payment_methods {
+  id                   Int                    @id @default(autoincrement())
+  method_name          String                 @unique @db.VarChar(50)
+  icon                 String?                @db.VarChar(255)
+  payments             payments[]
+  shop_payment_methods shop_payment_methods[]
+  user_payment_info    user_payment_info[]
+  orders               orders[]
+}
+
+model payments {
+  id                Int              @id @default(autoincrement())
+  order_id          Int?
+  user_id           Int?
+  payment_method_id Int?
+  payment_date      DateTime?        @default(now()) @db.Timestamp(6)
+  amount            Decimal          @db.Decimal(10, 2)
+  status            String?          @default("completed") @db.VarChar(20)
+  orders            orders?          @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  payment_methods   payment_methods? @relation(fields: [payment_method_id], references: [id], onUpdate: NoAction)
+  users             users?           @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+}
+
+model sku {
+  id              Int             @id @default(autoincrement())
+  spu_id          Int?
+  sku_no          String          @unique @db.VarChar(32)
+  sku_name        String?         @db.VarChar(64)
+  sku_description String?         @db.VarChar(256)
+  sku_type        Int?            @db.SmallInt
+  status          Int?            @default(0) @db.SmallInt
+  sort            Int?            @default(0)
+  sku_stock       Int?            @default(0)
+  sku_price       Decimal?        @default(0.00) @db.Decimal(10, 2)
+  create_time     DateTime?       @default(now()) @db.Timestamp(6)
+  update_time     DateTime?       @default(now()) @db.Timestamp(6)
+  order_details   order_details[]
+  spu             spu?            @relation(fields: [spu_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sku_attr        sku_attr[]
+  cart_items      cart_items[]
+}
+
+model spu {
+  id             Int         @id @default(autoincrement())
+  product_id     Int         @unique
+  category_id    Int?
+  product_name   String?     @db.VarChar(64)
+  spu_code       String?     @db.VarChar(256)
+  product_status Int?        @default(0) @db.SmallInt
+  product_shop   Int?
+  is_deleted     Boolean?    @default(false)
+  sort           Int?        @default(0)
+  image          String?     @db.VarChar(256)
+  create_time    DateTime?   @default(now()) @db.Timestamp(6)
+  update_time    DateTime?   @default(now()) @db.Timestamp(6)
+  description    String?     @default("Mô tả chi tiết về sản phẩm")
+  comments       comments[]
+  reviews        reviews[]
+  sku            sku[]
+  categories     categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction)
+  shops          shops?      @relation(fields: [product_shop], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_payment_info {
+  id                Int              @id @default(autoincrement())
+  user_id           Int?
+  payment_method_id Int?
+  account_number    String?          @db.VarChar(30)
+  bank_name         String?          @db.VarChar(50)
+  expiration_date   DateTime?        @db.Date
+  additional_info   String?
+  payment_methods   payment_methods? @relation(fields: [payment_method_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users             users?           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  id                 Int                  @id @default(autoincrement())
+  username           String               @unique @db.VarChar(50)
+  email              String               @unique @db.VarChar(100)
+  password           String               @db.VarChar(255)
+  full_name          String?              @db.VarChar(100)
+  phone_number       String?              @db.VarChar(20)
+  address            String?
+  role               String?              @default("user") @db.VarChar(20)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  dob                String?              @default("01/01/2000") @db.VarChar
+  gender             String?              @default("Nam") @db.VarChar
+  carts              carts[]
+  comments           comments[]
+  orders             orders[]
+  payments           payments[]
+  reviews            reviews[]
+  shipping_addresses shipping_addresses[]
+  shops              shops[]
+  user_payment_info  user_payment_info[]
+}
+
+model shop_payment_methods {
+  shop_id           Int
+  payment_method_id Int
+  payment_methods   payment_methods @relation(fields: [payment_method_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  shops             shops           @relation(fields: [shop_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([shop_id, payment_method_id])
+}
+
+model shops {
+  id                   Int                    @id @default(autoincrement())
+  shop_name            String                 @unique @db.VarChar(100)
+  description          String?
+  website_url          String?                @db.VarChar(255)
+  logo_url             String?                @db.VarChar(255)
+  user_id              Int?
+  created_at           DateTime?              @default(now()) @db.Timestamp(6)
+  updated_at           DateTime?              @default(now()) @db.Timestamp(6)
+  shop_payment_methods shop_payment_methods[]
+  users                users?                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  spu                  spu[]
+}
+
+model sku_attr {
+  id        Int   @id @default(autoincrement())
+  spu_specs Json?
+  sku_id    Int?
+  sku       sku?  @relation(fields: [sku_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spu_to_sku {
+  id          Int       @id @default(autoincrement())
+  sku_no      String    @db.VarChar(32)
+  spu_no      String    @db.VarChar(32)
+  is_deleted  Int?      @default(0) @db.SmallInt
+  create_time DateTime? @default(now()) @db.Timestamptz(6)
+  update_time DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@unique([sku_no, spu_no], map: "idx_spu_to_sku")
+}
+
+model cart_items {
+  cart_id     Int
+  sku_id      Int
+  quantity    Int
+  price       Decimal   @db.Decimal(10, 2)
+  total_price Decimal?  @default(dbgenerated("((quantity)::numeric * price)")) @db.Decimal(10, 2)
+  added_at    DateTime? @default(now()) @db.Timestamp(6)
+  carts       carts?    @relation(fields: [cart_id], references: [id])
+  sku         sku       @relation(fields: [sku_id], references: [id])
+
+  @@id([cart_id, sku_id])
+}
+
+model carts {
+  id         Int          @id @default(autoincrement())
+  user_id    Int?
+  created_at DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at DateTime?    @default(now()) @db.Timestamp(6)
+  cart_items cart_items[]
+  users      users?       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model shipping_addresses {
+  id            Int     @id @default(autoincrement())
+  user_id       Int?
+  user_received String? @db.VarChar(100)
+  address       String? @db.VarChar(256)
+  phone         String? @db.VarChar(20)
+  users         users?  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model comments {
+  id           Int       @id @default(autoincrement())
+  spu_id       Int?
+  user_id      Int?
+  comment_text String
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+  updated_at   DateTime? @default(now()) @db.Timestamp(6)
+  spu          spu?      @relation(fields: [spu_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users        users?    @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reviews {
+  id          Int       @id @default(autoincrement())
+  spu_id      Int?
+  user_id     Int?
+  rating      Int
+  review_text String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+  spu         spu?      @relation(fields: [spu_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       users?    @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+}

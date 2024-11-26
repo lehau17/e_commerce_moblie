@@ -23,7 +23,6 @@ axiosInstance.interceptors.request.use(
     }
 
     // Log request URL để kiểm tra
-    console.log('Request URL:', config.url);
     return config;
   },
   (error) => {

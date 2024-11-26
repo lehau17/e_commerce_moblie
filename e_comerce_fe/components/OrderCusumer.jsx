@@ -1,14 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput, Image, FlatList } from 'react-native';
 import tw from "twrnc";
+import {useDispatch, useSelector} from "react-redux"
+import { getMyCart, removeFromCart } from "../redux/slices/cartSlice";
 
 const CheckoutScreens = ({navigation, route}) => {
   const address = route.params.address
   const [selectedAddress, setSelectedAddress] = useState(null);
-  console.log(address)
   const handleCheckboxToggle = (addressId) => {
     setSelectedAddress(selectedAddress === addressId ? null : addressId); // Chuyển đổi giữa chọn và bỏ chọn
   };
+   const dispatch = useDispatch();
+  const { cartItems, loading } = useSelector((state) => state.carts);
+
+  useEffect(() => {
+    dispatch(getMyCart());
+  }, []);
+
+  const totalPrice = ()=>{
+    return cartItems.reduce((shopAcc, shop) => {
+  const shopTotal = shop.spus.reduce((spuAcc, spu) => {
+    const spuTotal = spu.skus.reduce((skuAcc, sku) => {
+      return skuAcc + parseFloat(sku.total_price);
+    }, 0);
+    return spuAcc + spuTotal;
+  }, 0);
+  return shopAcc + shopTotal;
+}, 0);
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -49,20 +69,24 @@ const CheckoutScreens = ({navigation, route}) => {
               </View>
 
               <Text style={tw` ml-1 my-2 text-[16px] font-bold`}>Đơn hàng của tôi</Text>
-              {[1, 2, 3, 5].map(() => {
-                return <View style={styles.orderItem}>
-                  <Image source={{ uri: 'https://example.com/jacket.png' }} style={styles.productImage} />
+              {cartItems?.map((item, key)=>{
+               return item.spus?.map(spu=>{
+                return  spu.skus.map(sku=>{
+                                       return <View style={styles.orderItem}>
+                  <Image source={{ uri: spu.image }} style={styles.productImage} />
                   <View style={styles.productDetails}>
-                    <Text style={styles.productName}>Quilted Jacket</Text>
-                    <Text style={styles.productVariant}>Color: Black | Size: S</Text>
-                    <Text style={styles.productPrice}>$1500</Text>
+                    <Text style={styles.productName}>{spu.product_name}</Text>
+                    <Text style={styles.productVariant}>{sku.sku_name}</Text>
+                    <Text style={styles.productPrice}>{sku.sku_price}</Text>
                   </View>
-                  <Text style={styles.quantity}>Quantity: 1</Text>
+                  <Text style={styles.quantity}>Quantity: {sku.quantity}</Text>
                 </View>
+                  })
+                })
               })}
               <View style={styles.subtotal}>
                 <Text style={styles.subtotalText}>Subtotal:</Text>
-                <Text style={styles.subtotalPrice}>$1880</Text>
+                <Text style={styles.subtotalPrice}>{totalPrice()}</Text>
               </View>
               <TouchableOpacity style={styles.primaryButton} onPress={()=>{navigation.navigate("SelectedPayment")}}>
                 <Text style={styles.primaryButtonText}>Tiếp tục</Text>
@@ -83,6 +107,19 @@ const CheckoutScreens = ({navigation, route}) => {
     </View>
   );
 };
+
+
+// {[1, 2, 3, 5].map(() => {
+//                 return <View style={styles.orderItem}>
+//                   <Image source={{ uri: 'https://example.com/jacket.png' }} style={styles.productImage} />
+//                   <View style={styles.productDetails}>
+//                     <Text style={styles.productName}>Quilted Jacket</Text>
+//                     <Text style={styles.productVariant}>Color: Black | Size: S</Text>
+//                     <Text style={styles.productPrice}>$1500</Text>
+//                   </View>
+//                   <Text style={styles.quantity}>Quantity: 1</Text>
+//                 </View>
+//               })}
 
 const styles = StyleSheet.create({
   container: {

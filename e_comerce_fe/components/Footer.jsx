@@ -1,10 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useRef, useEffect} from "react"
 import { View, TouchableOpacity, Animated, Text } from 'react-native';
 import { Ionicons, MaterialIcons, Entypo, FontAwesome5, AntDesign } from '@expo/vector-icons';  // Sử dụng thư viện icon
 
 const Footer = ({ scrollY, navigation }) => {
   const footerTranslateY = useRef(new Animated.Value(0)).current; // Animation để di chuyển footer lên xuống
-
   // Cập nhật trạng thái vị trí của footer khi cuộn
   useEffect(() => {
     // Khi cuộn xuống, footer sẽ di chuyển lên, và khi cuộn lên, footer sẽ di chuyển xuống.
@@ -47,7 +46,8 @@ const Footer = ({ scrollY, navigation }) => {
         <FontAwesome5 name="shopping-cart" size={20} color="black" />
         <Text>Cart</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{ alignItems: 'center' }}>
+      <TouchableOpacity style={{ alignItems: 'center' }} onPress={()=>{
+        navigation.navigate("Account")}}>
         <AntDesign name="user" size={24} color="black" />
         <Text>Profile</Text>
       </TouchableOpacity>

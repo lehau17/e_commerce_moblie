@@ -18,33 +18,23 @@ export default function OrderSuccess({navigation, route}) {
       
       {/* Success Message */}
       <Text style={tw`text-lg font-bold text-center text-teal-500 mt-4`}>Order placed successfully!</Text>
-      <Text style={tw`text-sm text-center text-gray-500`}>Commodo eu ut sunt qui minim fugiat elit nisi enim</Text>
+      <Text style={tw`text-sm text-center text-gray-500`}>Đơn hàng của bạn đang chờ xác nhận, vui lòng theo dõi trạng thái đơn hàng</Text>
 
       {/* Order Details */}
       <View style={styles.orderDetails}>
         <View style={styles.row}>
-          <Text style={styles.label}>Subtotal</Text>
+          <Text style={styles.label}>Tổng tiền</Text>
           <Text style={styles.value}>$2,800</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Tax (10%)</Text>
-          <Text style={styles.value}>$280</Text>
+          <Text style={styles.label}>Hình thức</Text>
+          <Text style={styles.value}>Tiền mặt</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Fees</Text>
-          <Text style={styles.value}>$0</Text>
+          <Text style={styles.label}>Tổng sản phẩm</Text>
+          <Text style={styles.value}>30</Text>
         </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Card</Text>
-          <View style={tw`flex-row items-center`}>
-            <Image source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" }} style={styles.cardLogo} />
-            <Text style={styles.value}>**** 2334</Text>
-          </View>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Total</Text>
-          <Text style={tw`text-green-500 font-semibold`}>$3,080</Text>
-        </View>
+        
       </View>
 
       {/* Rating Section */}
