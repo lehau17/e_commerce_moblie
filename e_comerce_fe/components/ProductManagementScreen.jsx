@@ -1,12 +1,19 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-
+import {useDispatch, useSelector} from "react-redux"
+import {fetchMyProducts, deleteProduct} from  "../redux/slices/productManager"
 const ProductManagementScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch()
+  const data = useSelector((state)=>state.productManager)
 
-  // Sample product list
+  useEffect(()=>{
+    dispatch(fetchMyProducts())
+  }, [])
+  console.log(data)
+
   const [products, setProducts] = useState([
     { id: "1", name: "Gấu bông Pikachu", price: "150,000 VND", stock: 20 },
     { id: "2", name: "Thỏ bông trắng", price: "120,000 VND", stock: 15 },
@@ -15,20 +22,9 @@ const ProductManagementScreen = () => {
   ]);
 
   // Handle delete product
-  const deleteProduct = (id) => {
-    Alert.alert(
-      "Xác nhận",
-      "Bạn có chắc chắn muốn xóa sản phẩm này?",
-      [
-        { text: "Hủy", style: "cancel" },
-        {
-          text: "Xóa",
-          onPress: () => setProducts(products.filter((product) => product.id !== id)),
-          style: "destructive",
-        },
-      ],
-      { cancelable: true }
-    );
+  const deleteProductSummit = (id) => {
+    console.log(id)
+    dispatch(deleteProduct(id))
   };
 
   const editProduct = (id) => {
@@ -41,16 +37,17 @@ const ProductManagementScreen = () => {
 
   const renderItem = ({ item }) => (
     <View style={styles.productCard}>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.productPrice}>Giá: {item.price}</Text>
-        <Text style={styles.productStock}>Tồn kho: {item.stock}</Text>
+      <Image source={item.image} style={{width:70, height:70, borderRadius:10}}/>
+      <View style={{ flex: 1, marginLeft:10}}>
+        <Text style={styles.productName}>{item.sku_name}</Text>
+        <Text style={styles.productPrice}>Giá: {item.sku_price}</Text>
+        <Text style={styles.productStock}>Tồn kho: {item.sku_stock}</Text>
       </View>
       <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => editProduct(item.id)} style={styles.editButton}>
+        <TouchableOpacity onPress={() => editProduct(item.spu_id)} style={styles.editButton}>
           <Ionicons name="create" size={20} color="#4CAF50" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => deleteProduct(item.id)} style={styles.deleteButton}>
+        <TouchableOpacity onPress={() => deleteProductSummit(item.spu_id)} style={styles.deleteButton}>
           <Ionicons name="trash" size={20} color="#FF6F61" />
         </TouchableOpacity>
       </View>
@@ -75,7 +72,7 @@ const ProductManagementScreen = () => {
 
       {/* Product List */}
       <FlatList
-        data={products}
+        data={data.products}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}

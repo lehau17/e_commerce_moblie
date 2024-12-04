@@ -19,6 +19,60 @@ export class SpuService {
     private shopSerice: ShopsService,
   ) {}
 
+  async createSkuAndSkuAttribute(
+    {
+      sku_attri,
+      sku_description,
+      sku_name,
+      sku_price,
+      sku_stock,
+      spu_id,
+      product_name,
+    }: {
+      product_name: string;
+      sku_name: string;
+      sku_description: string;
+      spu_id: number;
+      sku_stock: number;
+      sku_price: number;
+      sku_attri: any;
+    },
+    user_id: number,
+  ) {
+    const spu = await this.prisma.spu.create({
+      data: {
+        product_name,
+        product_id: new Date().getTime(),
+        shops: {
+          connect: {
+            id: user_id,
+          },
+        },
+      },
+    });
+    const sku = await this.prisma.sku.create({
+      data: {
+        sku_no: new Date().getTime().toString(),
+        sku_description: sku_description,
+        sku_name,
+        sku_price,
+        sku_stock,
+        spu: {
+          connect: {
+            id: spu.id,
+          },
+        },
+      },
+    });
+    await this.prisma.sku_attr.create({
+      data: {
+        spu_specs: sku_attri,
+        sku_id: sku.id,
+      },
+    });
+    return sku;
+  }
+
   // Thêm mới SPU
   async createSpu(createSpuDto: CreateSpuDto) {
     return this.prisma.spu.create({
@@ -208,7 +262,7 @@ export class SpuService {
     const foundRestaurant = await this.shopSerice.findShopByUser(user_id);
     if (!foundRestaurant)
       throw new BadRequestException(`User ${user_id} not found`);
-    const data = await this.prisma.$executeRaw`SELECT 
+    const data = await this.prisma.$queryRaw`SELECT 
   sku.id,
   sku.sku_no,
   sku.sku_name,
@@ -221,7 +275,6 @@ export class SpuService {
   sku.create_time,
   sku.update_time,
   spu.id AS spu_id,
-  spu.product_id,
   spu.product_name,
   spu.spu_code,
   spu.product_status,
@@ -233,8 +286,9 @@ export class SpuService {
   spu.update_time AS spu_update_time,
   spu.description AS spu_description
 FROM sku
-JOIN spu ON sku.spu_id = spu.id;
-where spu.product_shop = ${foundRestaurant.id}`;
+JOIN spu ON sku.spu_id = spu.id 
+where spu.product_shop = ${foundRestaurant.id} and is_deleted = false`;
+    console.log(data);
     return data;
   }
 }

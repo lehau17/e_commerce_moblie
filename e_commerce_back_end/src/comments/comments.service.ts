@@ -12,6 +12,7 @@ export class CommentsService {
         ...createCommentDto,
         user_id: userId,
       },
+      include: { users: true },
     });
   }
 
@@ -40,6 +41,9 @@ export class CommentsService {
     return this.prisma.comments.findMany({
       where: {
         spu_id,
+      },
+      include: {
+        users: true,
       },
     });
   }

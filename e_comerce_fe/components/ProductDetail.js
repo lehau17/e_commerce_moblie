@@ -38,30 +38,7 @@ const productMock = {
   rating: 4.5,
   total_reviews: 99,
   top_reviews: [
-    {
-      id: 1,
-      content: 'tay nghe chien vaidai',
-      user_id: 1,
-      user_img: 'https://picsum.photos/200',
-      user_name: 'hau le',
-      created_at: new Date(),
-    },
-    {
-      id: 2,
-      content: 'tay nghe chien vaidai',
-      user_id: 1,
-      user_img: 'https://picsum.photos/200',
-      user_name: 'hau le',
-      created_at: new Date(),
-    },
-    {
-      id: 3,
-      content: 'tay nghe chien vaidai',
-      user_id: 1,
-      user_img: 'https://picsum.photos/200',
-      user_name: 'hau le',
-      created_at: new Date(),
-    },
+    
   ],
   description:
     'Headphone được sản xuất và phát triển bởi IUH Industry. Hàng Xi da chất lượng thấp',
@@ -148,15 +125,12 @@ export default function ProductDetail({ navigation, route }) {
 
   // Nếu tìm thấy SKU phù hợp, thực hiện hành động
   if (selectedSku) {
-    console.log(`Added to Cart - SKU ID: ${selectedSku.id}`);
     dispatch(addToCart({quantity, sku_id: selectedSku.id}))
     setModalVisible(false); // Đóng modal
   } else {
     console.log("No matching SKU found.");
   }
 };
-
-  console.log("check product detail >>>>", productDetail)
 
 
 
@@ -208,13 +182,14 @@ export default function ProductDetail({ navigation, route }) {
           </View>
 
           {/* Other product information */}
-          <View style={tw`mt-4 flex flex-row items-center justify-between`}>
+          <TouchableOpacity style={tw`mt-4 flex flex-row items-center justify-between`} onPress={()=>{navigation.navigate("ProductComments", {id, is : false})}}>
             <Text style={tw`text-xl font-bold`}>Reviews</Text>
-            <TouchableOpacity style={tw`text-[gray] font-bold`}>
+            <TouchableOpacity style={tw`text-[gray] font-bold`}
+              onPress={()=>{navigation.navigate("ProductComments", {id, is : false})}} >
               See All
             </TouchableOpacity>
-          </View>
-          <View style={tw`p-5 bg-[#e3e4e5] flex flex-row rounded-lg`}>
+          </TouchableOpacity>
+          <View style={tw`p-5 bg-[#e3e4e5] flex flex-row rounded-lg pb-20 mb-20`}>
             <View>
               <Text>{productMock.rating}/5</Text>
               <Text>{productMock.total_reviews} reviews</Text>
@@ -227,27 +202,7 @@ export default function ProductDetail({ navigation, route }) {
           </View>
 
           {/* Top Reviews */}
-          <View style={tw`flex mt-3`}>
-            {productMock.top_reviews.map((item, index) => {
-              return (
-                <View
-                  key={index}
-                  style={tw`flex flex-row items-center justify-between p-3 border-b border-b-slate-300 rounded-b-lg`}>
-                  <Image
-                    source={{ uri: item.user_img }}
-                    style={{ height: 50, width: 50, borderRadius: 1000 }}
-                  />
-                  <View style={tw`flex-1 ml-2 justify-between h-full`}>
-                    <Text style={tw`text-[18px] font-bold`}>{item.user_name}</Text>
-                    <Text style={tw`text-[gray]`}>{item.content}</Text>
-                  </View>
-                  <View>
-                    <Text style={tw`text-[gray]`}>One day ago</Text>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
+          
         </View>
       </ScrollView>
 

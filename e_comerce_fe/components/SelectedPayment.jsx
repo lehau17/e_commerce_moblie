@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image } from 'rea
 import tw from "twrnc";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPaymentMethods } from "../redux/slices/paymentSlice";
-
+import {addOrder} from "../redux/slices/orderSlice"
 const SelectedPayment = ({ navigation, route }) => {
+const address_id = route.params.address_id
   const dispatch = useDispatch();
   const { paymentMethods, loading, error } = useSelector((state) => state.paymentMethods);
   // State to manage selected payment option
@@ -16,6 +17,7 @@ const SelectedPayment = ({ navigation, route }) => {
 
   // Handle selection toggle
   const handleSelectPayment = (paymentType) => {
+    console.log(paymentType)
     setSelectedPayment(paymentType);
   };
 
@@ -47,7 +49,7 @@ const SelectedPayment = ({ navigation, route }) => {
                 <View style={styles.addressContainer} key={item.id}>
                   <TouchableOpacity
                     style={styles.checkboxContainer}
-                    onPress={() => handleSelectPayment(item.method_name)} // Use method_name as identifier
+                    onPress={() => handleSelectPayment(item.id)} // Use method_name as identifier
                   >
                     <View style={[styles.checkbox, selectedPayment === item.method_name && styles.checkboxChecked]}>
                       {selectedPayment === item.method_name && <Text style={styles.checkboxText}>✓</Text>}
@@ -57,7 +59,13 @@ const SelectedPayment = ({ navigation, route }) => {
                   <Text style={{ marginLeft: 5, fontWeight: '700' }}>{item.method_name}</Text>
                 </View>
               ))}
-          <TouchableOpacity onPress={()=>{navigation.navigate("OrderSuccess")}} style={{padding:15, margin:5, borderRadius:20, border:"1px solid gray", textAlign:"center", backgroundColor : "#2f80ec", color  : "white", fontWeight :700}}>Hoàn Thành</TouchableOpacity>
+          <TouchableOpacity onPress={()=>{
+            console.log(address_id, selectedPayment)
+            dispatch(addOrder({
+              address_id,
+              payment_method_id : selectedPayment
+            }))
+            navigation.navigate("OrderSuccess")}} style={{padding:15, margin:5, borderRadius:20, border:"1px solid gray", textAlign:"center", backgroundColor : "#2f80ec", color  : "white", fontWeight :700}}>Hoàn Thành</TouchableOpacity>
             </View>
           </View>
         </View>

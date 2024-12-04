@@ -47,6 +47,15 @@ export const createProduct = createAsyncThunk(
   }
 );
 
+
+export const createSku = createAsyncThunk(
+  'products/createsku',
+  async (data) => {
+    const response = await axiosInstance.post(API_URL+"/sku", data);
+    return response.data.data;  // Dữ liệu trả về từ API
+  }
+);
+
 // Gọi API để cập nhật sản phẩm
 export const updateProduct = createAsyncThunk(
   'products/updateProduct',
@@ -79,10 +88,10 @@ export const fetchTopRecommendedProducts = createAsyncThunk(
 
 // Khởi tạo state mặc định
 const initialState = {
-  products: {},  // Danh sách sản phẩm
-  topRecommended: {},  // Danh sách sản phẩm recommend
-  productByCate : {},
-  productDetail : {},
+  products: [],  // Danh sách sản phẩm
+  topRecommended: [],  // Danh sách sản phẩm recommend
+  productByCate : [],
+  productDetail : [],
   loading: false,  // Trạng thái loading
   error: null,  
 };
@@ -185,7 +194,19 @@ const productSlice = createSlice({
       .addCase(fetchProductDetail.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-      });
+      })
+            .addCase(createSku.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createSku.fulfilled, (state, action) => {
+        state.productDetail = action.payload; // Lưu dữ liệu chi tiết sản phẩm vào state
+        state.loading = false;
+      })
+      .addCase(createSku.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
   },
 });
 

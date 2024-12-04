@@ -9,7 +9,7 @@ export class CartItemsService {
   constructor(
     private prisma: PrismaService,
     private cartService: CartsService,
-  ) { }
+  ) {}
 
   async create(createCartItemDto: CreateCartItemDto, user_id: number) {
     let foundCart = await this.cartService.getCartByUser(user_id);
@@ -54,13 +54,13 @@ export class CartItemsService {
       data: {
         carts: {
           connect: {
-            id: foundCart.id
-          }
+            id: foundCart.id,
+          },
         }, // Đảm bảo sử dụng foundCart.id thay vì createCartItemDto.cart_id
         sku: {
           connect: {
-            id: createCartItemDto.sku_id
-          }
+            id: createCartItemDto.sku_id,
+          },
         },
         quantity: createCartItemDto.quantity,
         price: foundSku.sku_price,

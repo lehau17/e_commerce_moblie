@@ -9,6 +9,8 @@ import shippingAddressReducer from './slices/shippingAddressSlice';
 import userProfileReducer from './slices/userProfileSlice'; 
 import paymentMethodsReducer from "./slices/paymentSlice"
 import productManagerReducer from "./slices/productManager"
+import orderReducer from "./slices/orderSlice"
+import commentReducer from "./slices/commentSlice"
 // Tạo store với các slice
 const store = configureStore({
   reducer: {
@@ -17,10 +19,12 @@ const store = configureStore({
     auth :authReducer,
     products: productReducer,
     addresses : addressReducer,
+    order :  orderReducer,
     carts : cartReducer,
     shippingAddress: shippingAddressReducer,
     paymentMethods : paymentMethodsReducer,
-    productManager : productManagerReducer // Kết nối category slice với store
+    productManager : productManagerReducer,
+    comments: commentReducer, // Kết nối category slice với store
   },
 });
 

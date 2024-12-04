@@ -94,7 +94,7 @@ export default function Home({ navigation, route }) {
               navigation.navigate("SeeAllCate")
             }}>see all</TouchableOpacity>
             {categories.map((item) => (
-              <TouchableOpacity key={item.id} style={{ padding: 10 }} onPress={() => navigation.navigate("CategoryList", { cate: item.name })}>
+              <TouchableOpacity key={item.id} style={{ padding: 10 }} >
                 <Image source={{ uri: item.image }} style={{ width: 50, height: 50, borderRadius: 35 }} />
                 <Text style={{ textAlign: "center", marginTop: 5, fontSize: 12, fontWeight: "700" }}>{item.name}</Text>
               </TouchableOpacity>

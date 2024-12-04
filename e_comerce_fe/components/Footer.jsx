@@ -34,7 +34,9 @@ const Footer = ({ scrollY, navigation }) => {
         <Ionicons name="home-outline" size={20} color="black" />
         <Text>Home</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{ alignItems: 'center' }}>
+      <TouchableOpacity style={{ alignItems: 'center' }} onPress={()=>{
+        console.log("vao")
+        navigation.navigate("ProductSearch")}}>
         <MaterialIcons name="search" size={20} color="black" />
         <Text>Search</Text>
       </TouchableOpacity>

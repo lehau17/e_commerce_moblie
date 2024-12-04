@@ -47,7 +47,9 @@ const HomeScreen = () => {
           <TouchableOpacity style={styles.functionCard} onPress={()=>{navigation.navigate("ProductManagementScreen")}}>
             <Text style={styles.functionText}>Quản lý sản phẩm</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.functionCard}>
+          <TouchableOpacity style={styles.functionCard} onPress={()=>{
+            navigation.navigate("OrderManagementScreen")
+          }}>
             <Text style={styles.functionText}>Quản lý đơn hàng</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.functionCard}>

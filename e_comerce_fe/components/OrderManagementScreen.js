@@ -8,7 +8,7 @@ const OrderManagementScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   
   // Get orders from the Redux state
-  const orders = useSelector((state) => state.order.fullOrder);
+  const orders = useSelector((state) => state.orders.fullOrder);
 
   useEffect(() => {
     // Dispatch the action to fetch orders when the component is mounted
@@ -30,11 +30,10 @@ const OrderManagementScreen = ({ navigation }) => {
     }
   };
 
-const handleOrderClick = (order) => {
-    // Navigate to order detail screen and pass the full order object as a parameter
-    navigation.navigate("OrderDetail", { order });
-};
-
+  const handleOrderClick = (order) => {
+    // Navigate to order detail screen
+    navigation.navigate("OrderDetail", { orderId: order.id });
+  };
 
   const renderOrderItem = ({ item }) => {
     const statusStyle = getStatusStyle(item.status);

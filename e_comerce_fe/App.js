@@ -32,6 +32,10 @@ import HomeShop from "./components/HomeShop.jsx"
 import AddProductScreen from "./components/AddProductScreen.jsx"
 import ProductManagementScreen from "./components/ProductManagementScreen.jsx"
 import OrderManagementScreen from "./components/OrderManagementScreen.jsx"
+import OrderDetailScreen from "./components/OrderDetailScreen.jsx"
+import MyOrder from  "./components/MyOrder.jsx"
+import ProductSearch from "./components/Search.jsx"
+import ProductComments from "./components/ListComment.jsx"
 // Details Screen component
 function DetailsScreen({ navigation }) {
   return (
@@ -47,7 +51,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
-          initialRouteName="HomeShop"
+          initialRouteName="Account"
           screenOptions={{ cardStyle: { flex: 1 } }}>
           <Stack.Screen
             name="Home"
@@ -184,6 +188,27 @@ export default function App() {
             component={OrderManagementScreen}
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+          name="OrderDetail"
+          component={OrderDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MyOrder"
+          component={MyOrder}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProductSearch"
+          component={ProductSearch}
+          options={{ headerShown: false }}
+        />
+                <Stack.Screen
+          name="ProductComments"
+          component={ProductComments}
+          options={{ headerShown: false }}
+        />
+          
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

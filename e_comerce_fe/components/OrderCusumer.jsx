@@ -6,7 +6,7 @@ import { getMyCart, removeFromCart } from "../redux/slices/cartSlice";
 
 const CheckoutScreens = ({navigation, route}) => {
   const address = route.params.address
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(1);
   const handleCheckboxToggle = (addressId) => {
     setSelectedAddress(selectedAddress === addressId ? null : addressId); // Chuyển đổi giữa chọn và bỏ chọn
   };
@@ -88,7 +88,7 @@ const CheckoutScreens = ({navigation, route}) => {
                 <Text style={styles.subtotalText}>Subtotal:</Text>
                 <Text style={styles.subtotalPrice}>{totalPrice()}</Text>
               </View>
-              <TouchableOpacity style={styles.primaryButton} onPress={()=>{navigation.navigate("SelectedPayment")}}>
+              <TouchableOpacity style={styles.primaryButton} onPress={()=>{navigation.navigate("SelectedPayment", {address_id: address.id})}}>
                 <Text style={styles.primaryButtonText}>Tiếp tục</Text>
               </TouchableOpacity>
             </View>
